@@ -1,4 +1,5 @@
 import { createRoomDocument } from "../api/roomApi";
+import { renameDocument, deleteDocument } from "../api/documentApi";
 import { useEffect, useState } from "react";
 
 function FileExplorer({
@@ -9,10 +10,13 @@ function FileExplorer({
   onSelect,
   refreshDocuments,
   onDocumentCreated,
+  setActiveDocument,
 }) {
   const [showInput, setShowInput] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [editingId, setEditingId] = useState(null);
 
+  const [editingName, setEditingName] = useState("");
   const detectLanguage = (filename) => {
     const ext = filename.split(".").pop();
 
@@ -50,6 +54,45 @@ function FileExplorer({
 
       await refreshDocuments();
       await onDocumentCreated(newDocument._id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleRename = async (documentId) => {
+    if (!editingName.trim()) return;
+
+    try {
+      await renameDocument(documentId, editingName);
+
+      setEditingId(null);
+      setEditingName("");
+
+      await refreshDocuments();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleDelete = async (documentId) => {
+    const confirmDelete = window.confirm("Delete this file?");
+
+    if (!confirmDelete) return;
+
+    try {
+      const deletedWasActive = activeDocument?._id === documentId;
+
+      await deleteDocument(documentId);
+
+      const updatedDocs = documents.filter((doc) => doc._id !== documentId);
+
+      await refreshDocuments();
+
+      if (deletedWasActive) {
+        if (updatedDocs.length > 0) {
+          await onSelect(updatedDocs[0]._id);
+        } else {
+          setActiveDocument(null);
+        }
+      }
     } catch (error) {
       console.error(error);
     }
@@ -101,7 +144,51 @@ function FileExplorer({
               activeDocument?._id === doc._id ? "#e5e5e5" : "transparent",
           }}
         >
-          {doc.title}
+          <>
+            {editingId === doc._id ? (
+              <input
+                autoFocus
+                value={editingName}
+                onChange={(e) => setEditingName(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleRename(doc._id);
+                  }
+
+                  if (e.key === "Escape") {
+                    setEditingId(null);
+                  }
+                }}
+              />
+            ) : (
+              <>
+                {doc.title}
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+
+                    setEditingId(doc._id);
+
+                    setEditingName(doc.title);
+                  }}
+                >
+                  ✏️
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+
+                    handleDelete(doc._id);
+                  }}
+                >
+                  🗑️
+                </button>
+              </>
+            )}
+          </>
         </div>
       ))}
     </div>

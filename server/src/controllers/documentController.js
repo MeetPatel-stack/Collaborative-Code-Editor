@@ -62,3 +62,50 @@ export const updateDocument = async (req, res) => {
     });
   }
 };
+
+
+export const renameDocument = async (
+  req,
+  res
+) => {
+  try {
+    const document =
+      await Document.findByIdAndUpdate(
+        req.params.id,
+        {
+          title: req.body.title,
+        },
+        { new: true }
+      );
+
+    res.status(200).json({
+      success: true,
+      document,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const deleteDocument = async (
+  req,
+  res
+) => {
+  try {
+    await Document.findByIdAndDelete(
+      req.params.id
+    );
+
+    res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

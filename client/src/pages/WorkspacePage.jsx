@@ -112,6 +112,7 @@ function WorkspacePage() {
         onSelect={loadDocument}
         refreshDocuments={fetchDocuments}
         onDocumentCreated={loadDocument}
+        setActiveDocument={setActiveDocument}
       />
 
       <EditorPanel
