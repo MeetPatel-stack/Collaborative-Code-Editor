@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-
+import { socket } from "../socket/socket";
 import FileExplorer from "../components/FileExplorer";
 import EditorPanel from "../components/EditorPanel";
 
@@ -16,6 +16,8 @@ function WorkspacePage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [room, setRoom] = useState(null);
+
+  const isRemoteChange = useRef(false);
 
   const fetchDocuments = async (selectFirst = false) => {
     try {
@@ -55,10 +57,24 @@ function WorkspacePage() {
   };
 
   const handleCodeChange = (newCode) => {
+    const updatedCode = newCode || "";
+
     setActiveDocument((prev) => ({
       ...prev,
-      code: newCode || "",
+      code: updatedCode,
     }));
+
+    if (isRemoteChange.current) {
+      isRemoteChange.current = false;
+    }
+
+    if (!isRemoteChange.current && activeDocument) {
+      socket.emit("code-change", {
+        roomId,
+        documentId: activeDocument._id,
+        code: updatedCode,
+      });
+    }
   };
 
   const saveDocumentChanges = async () => {
@@ -95,6 +111,35 @@ function WorkspacePage() {
     }, 2000);
 
     return () => clearTimeout(timer);
+  }, [activeDocument]);
+
+  useEffect(() => {
+    socket.connect();
+
+    socket.emit("join-room", roomId);
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [roomId]);
+
+  useEffect(() => {
+    socket.on("receive-change", ({ documentId, code }) => {
+      if (!activeDocument || activeDocument._id !== documentId) {
+        return;
+      }
+
+      isRemoteChange.current = true;
+
+      setActiveDocument((prev) => ({
+        ...prev,
+        code,
+      }));
+    });
+
+    return () => {
+      socket.off("receive-change");
+    };
   }, [activeDocument]);
 
   return (
