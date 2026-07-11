@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { createWorkspace } from "../api/workspaceApi";
+import { useAuth } from "../context/AuthContext";
 
 function HomePage() {
   const navigate = useNavigate();
-
+  const { user } = useAuth();
   const [workspaceName, setWorkspaceName] = useState("");
 
   const handleCreateWorkspace = async () => {
@@ -30,6 +31,10 @@ function HomePage() {
         alignItems: "center",
       }}
     >
+      <h2>
+        Welcome
+        {user?.name}
+      </h2>
       <div>
         <input
           type="text"

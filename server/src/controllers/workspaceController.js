@@ -2,12 +2,28 @@ import Workspace from "../models/Workspace.js";
 import Document from "../models/Document.js";
 import { getIO } from "../socket/socket.js";
 
+import WorkspaceMember from "../models/WorkspaceMember.js";
+
 export const createWorkspace = async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
     const { name } = req.body;
 
     const workspace = await Workspace.create({
       name: name?.trim() || "Untitled Workspace",
+      type,
+      owner: req.user._id,
+    });
+
+    await WorkspaceMember.create({
+      workspaceId: workspace._id,
+      userId: req.user._id,
+      role: type === "CLASSROOM" ? "TEACHER" : "OWNER",
     });
 
     const document = await Document.create({

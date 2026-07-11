@@ -14,7 +14,12 @@ import "./config/passport.js";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -24,21 +29,19 @@ app.use(
     secret: process.env.JWT_SECRET,
     resave: false,
     saveUninitialized: false,
-  })
+  }),
 );
 
 app.use(passport.initialize());
 
 app.use(passport.session());
 
-
 app.use("/api/auth", authRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 
 app.get("/", (req, res) => {
-    res.send("CodeCollab API Running");
+  res.send("CodeCollab API Running");
 });
-
 
 export default app;

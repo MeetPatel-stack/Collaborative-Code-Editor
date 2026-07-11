@@ -12,7 +12,7 @@ export const googleSuccess = async (req, res) => {
     process.env.JWT_SECRET,
     {
       expiresIn: "7d",
-    }
+    },
   );
 
   res.cookie("token", token, {
@@ -22,4 +22,21 @@ export const googleSuccess = async (req, res) => {
   });
 
   res.redirect(process.env.CLIENT_URL);
+};
+
+export const getCurrentUser = async (
+  req,
+  res
+) => {
+  try {
+    res.status(200).json({
+      success: true,
+      user: req.user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };

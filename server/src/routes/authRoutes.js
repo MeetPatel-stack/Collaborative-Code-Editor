@@ -1,8 +1,8 @@
 import express from "express";
 import passport from "passport";
 
-import { googleSuccess } from "../controllers/authController.js";
-
+import { googleSuccess , getCurrentUser } from "../controllers/authController.js";
+import { authenticateUser  } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 /*
@@ -31,6 +31,12 @@ router.get(
     session: true,
   }),
   googleSuccess
+);
+
+router.get(
+  "/me",
+  authenticateUser,
+  getCurrentUser
 );
 
 export default router;
