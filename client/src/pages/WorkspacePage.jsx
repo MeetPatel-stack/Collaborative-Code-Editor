@@ -4,11 +4,11 @@ import { socket } from "../socket/socket";
 import FileExplorer from "../components/FileExplorer";
 import EditorPanel from "../components/EditorPanel";
 
-import { getRoomDocuments, getRoom } from "../api/roomApi";
+import { getWorkspaceDocuments, getWorkspace } from "../api/workspaceApi";
 import { getDocument, updateDocument } from "../api/documentApi";
 
 function WorkspacePage() {
-  const { roomId } = useParams();
+  const { workspaceId} = useParams();
 
   const [documents, setDocuments] = useState([]);
   const [activeDocument, setActiveDocument] = useState(null);
@@ -21,7 +21,7 @@ function WorkspacePage() {
 
   const fetchDocuments = async (selectFirst = false) => {
     try {
-      const data = await getRoomDocuments(roomId);
+      const data = await getWorkspaceDocuments(workspaceId);
 
       setDocuments(data.documents);
 
@@ -35,7 +35,7 @@ function WorkspacePage() {
 
   const fetchRoom = async () => {
     try {
-      const data = await getRoom(roomId);
+      const data = await getWorkspace(workspaceId);
 
       setRoom(data.room);
     } catch (error) {
@@ -70,7 +70,7 @@ function WorkspacePage() {
 
     if (!isRemoteChange.current && activeDocument) {
       socket.emit("code-change", {
-        roomId,
+        workspaceId,
         documentId: activeDocument._id,
         code: updatedCode,
       });
@@ -100,7 +100,7 @@ function WorkspacePage() {
   useEffect(() => {
     fetchRoom();
     fetchDocuments(true);
-  }, [roomId]);
+  }, [workspaceId]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -116,12 +116,12 @@ function WorkspacePage() {
   useEffect(() => {
     socket.connect();
 
-    socket.emit("join-room", roomId);
+    socket.emit("join-room", workspaceId);
 
     return () => {
       socket.disconnect();
     };
-  }, [roomId]);
+  }, [workspaceId]);
 
   useEffect(() => {
     socket.on("receive-change", ({ documentId, code }) => {
@@ -142,6 +142,18 @@ function WorkspacePage() {
     };
   }, [activeDocument]);
 
+  useEffect(() => {
+    socket.on("file-created", (newDocument) => {
+      
+
+      setDocuments((prev) => [...prev, newDocument]);
+    });
+
+    return () => {
+      socket.off("file-created");
+    };
+  }, []);
+
   return (
     <div
       style={{
@@ -151,7 +163,7 @@ function WorkspacePage() {
     >
       <FileExplorer
         room={room}
-        roomId={roomId}
+        workspaceId={workspaceId}
         documents={documents}
         activeDocument={activeDocument}
         onSelect={loadDocument}

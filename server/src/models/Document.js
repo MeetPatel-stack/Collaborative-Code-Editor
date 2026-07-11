@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const documentSchema = new mongoose.Schema(
   {
-    roomId: {
+    workspaceId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Room",
+      ref: "Workspace",
       required: true,
     },
 

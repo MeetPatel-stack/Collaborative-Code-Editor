@@ -6,6 +6,7 @@ import { Server } from "socket.io";
 
 import app from "./app.js";
 import connectDB from "./config/db.js";
+import { setIO } from "./socket/socket.js";
 
 const PORT = process.env.PORT || 5000;
 connectDB();
@@ -19,14 +20,16 @@ const io = new Server(server, {
   },
 });
 
+setIO(io);
+
 io.on("connection", (socket) => {
 
-  socket.on("join-room", (roomId) => {
-    socket.join(roomId);
+  socket.on("join-room", (workspaceId) => {
+    socket.join(workspaceId);
   });
 
-  socket.on("code-change", ({ roomId, documentId, code }) => {
-    socket.to(roomId).emit("receive-change", {
+  socket.on("code-change", ({ workspaceId, documentId, code }) => {
+    socket.to(workspaceId).emit("receive-change", {
       documentId,
       code,
     });

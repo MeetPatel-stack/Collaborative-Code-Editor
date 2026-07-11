@@ -1,18 +1,18 @@
 import Document from "../models/Document.js";
 
-export const createDocument = async (req, res) => {
-  try {
-    const document = await Document.create({
-      title: "Untitled Document",
-    });
+// export const createDocument = async (req, res) => {
+//   try {
+//     const document = await Document.create({
+//       title: "Untitled Document",
+//     });
 
-    res.status(201).json(document);
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
+//     res.status(201).json(document);
+//   } catch (error) {
+//     res.status(500).json({
+//       message: error.message,
+//     });
+//   }
+// };
 
 
 export const getDocument = async (req, res) => {

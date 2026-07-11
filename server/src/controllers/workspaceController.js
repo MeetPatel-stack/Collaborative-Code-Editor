@@ -1,16 +1,17 @@
-import Room from "../models/Room.js";
+import Workspace from "../models/Workspace.js";
 import Document from "../models/Document.js";
+import { getIO } from "../socket/socket.js";
 
-export const createRoom = async (req, res) => {
+export const createWorkspace = async (req, res) => {
   try {
     const { name } = req.body;
 
-    const room = await Room.create({
+    const workspace = await Workspace.create({
       name: name?.trim() || "Untitled Workspace",
     });
 
     const document = await Document.create({
-      roomId: room._id,
+      workspaceId: workspace._id,
       title: "main.js",
       language: "javascript",
       code: "",
@@ -18,7 +19,7 @@ export const createRoom = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      room,
+      workspace,
       document,
     });
   } catch (error) {
@@ -29,11 +30,11 @@ export const createRoom = async (req, res) => {
   }
 };
 
-export const getRoom = async (req, res) => {
+export const getWorkspace = async (req, res) => {
   try {
-    const room = await Room.findById(req.params.roomId);
+    const workspace = await Workspace.findById(req.params.workspaceId);
 
-    if (!room) {
+    if (!workspace) {
       return res.status(404).json({
         success: false,
         message: "Room not found",
@@ -42,7 +43,7 @@ export const getRoom = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      room,
+      workspace,
     });
   } catch (error) {
     res.status(500).json({
@@ -52,11 +53,10 @@ export const getRoom = async (req, res) => {
   }
 };
 
-
-export const getRoomDocuments = async (req, res) => {
+export const getWorkspaceDocuments = async (req, res) => {
   try {
     const documents = await Document.find({
-      roomId: req.params.roomId,
+      workspaceId: req.params.workspaceId,
     }).sort({ createdAt: 1 });
 
     res.status(200).json({
@@ -71,16 +71,20 @@ export const getRoomDocuments = async (req, res) => {
   }
 };
 
-export const createRoomDocument = async (req, res) => {
+export const createWorkspaceDocument = async (req, res) => {
   try {
     const { title, language } = req.body;
 
     const document = await Document.create({
-      roomId: req.params.roomId,
+      workspaceId: req.params.workspaceId,
       title,
       language,
       code: "",
     });
+
+    const io = getIO();
+
+    io.to(req.params.workspaceId).emit("file-created", document);
 
     res.status(201).json({
       success: true,

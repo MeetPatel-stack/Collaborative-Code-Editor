@@ -1,10 +1,10 @@
-import { createRoomDocument } from "../api/roomApi";
+import { createWorkspaceDocument } from "../api/workspaceApi";
 import { renameDocument, deleteDocument } from "../api/documentApi";
 import { useEffect, useState } from "react";
 
 function FileExplorer({
   room,
-  roomId,
+  workspaceId,
   documents,
   activeDocument,
   onSelect,
@@ -42,7 +42,7 @@ function FileExplorer({
     try {
       const language = detectLanguage(fileName);
 
-      const response = await createRoomDocument(roomId, {
+      const response = await createRoomDocument(workspaceId, {
         title: fileName,
         language,
       });

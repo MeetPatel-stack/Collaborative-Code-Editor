@@ -1,7 +1,7 @@
 import express from "express";
 
 import {
-  createDocument,
+  // createDocument,
   getDocument,
   updateDocument,
   renameDocument,
@@ -10,7 +10,7 @@ import {
 
 const router = express.Router();
 
-router.post("/", createDocument);
+// router.post("/", createDocument);
 
 router.get("/:id", getDocument);
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { createRoom } from "../api/roomApi";
+import { createWorkspace } from "../api/workspaceApi";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -10,11 +10,12 @@ function HomePage() {
 
   const handleCreateWorkspace = async () => {
     try {
-      const data = await createRoom({
+      const data = await createWorkspace({
         name: workspaceName,
+        type: "COLLABORATION",
       });
 
-      navigate(`/workspace/${data.room._id}`);
+      navigate(`/workspace/${data.workspace._id}`);
     } catch (error) {
       console.error(error);
     }
