@@ -3,6 +3,7 @@ import Document from "../models/Document.js";
 import { getIO } from "../socket/socket.js";
 
 import WorkspaceMember from "../models/WorkspaceMember.js";
+import { createWorkspaceService } from "../services/workspaceService.js";
 
 export const createWorkspace = async (req, res) => {
   try {
@@ -12,12 +13,16 @@ export const createWorkspace = async (req, res) => {
         message: "Unauthorized",
       });
     }
-    const { name } = req.body;
+    const { name, type, password } = req.body;
 
-    const workspace = await Workspace.create({
-      name: name?.trim() || "Untitled Workspace",
+    const workspace = await createWorkspaceService({
+      name,
+
       type,
-      owner: req.user._id,
+
+      ownerId: req.user._id,
+
+      password,
     });
 
     await WorkspaceMember.create({

@@ -1,4 +1,5 @@
 import express from "express";
+import { authenticateUser } from "../middleware/authMiddleware.js";
 import {
   createWorkspace,
   getWorkspace,
@@ -8,15 +9,16 @@ import {
 
 const router = express.Router();
 
-router.post("/", createWorkspace);
+router.post("/", authenticateUser, createWorkspace);
 
-router.get("/:workspaceId", getWorkspace);
+router.get("/:workspaceId", authenticateUser, getWorkspace);
 
-router.get("/:workspaceId/documents", getWorkspaceDocuments);
+router.get("/:workspaceId/documents", authenticateUser, getWorkspaceDocuments);
 
 router.post(
   "/:workspaceId/documents",
-  createWorkspaceDocument
+  authenticateUser,
+  createWorkspaceDocument,
 );
 
 export default router;

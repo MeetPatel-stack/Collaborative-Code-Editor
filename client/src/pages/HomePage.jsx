@@ -8,12 +8,17 @@ function HomePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [workspaceName, setWorkspaceName] = useState("");
+  const [password, setPassword] = useState("");
 
+  const [type, setType] = useState("COLLABORATION");
   const handleCreateWorkspace = async () => {
     try {
       const data = await createWorkspace({
         name: workspaceName,
-        type: "COLLABORATION",
+
+        password,
+
+        type,
       });
 
       navigate(`/workspace/${data.workspace._id}`);
@@ -42,6 +47,23 @@ function HomePage() {
           value={workspaceName}
           onChange={(e) => setWorkspaceName(e.target.value)}
         />
+
+        <br />
+        <br />
+        <input
+          type="password"
+          placeholder="Workspace Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <br />
+        <br />
+        <select value={type} onChange={(e) => setType(e.target.value)}>
+          <option value="COLLABORATION">Collaboration</option>
+
+          <option value="CLASSROOM">Classroom</option>
+        </select>
 
         <br />
         <br />

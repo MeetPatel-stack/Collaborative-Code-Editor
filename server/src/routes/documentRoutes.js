@@ -1,5 +1,5 @@
 import express from "express";
-
+import { documentAccess } from "../middleware/documentAccess.js";
 import {
   // createDocument,
   getDocument,
@@ -8,22 +8,18 @@ import {
   deleteDocument,
 } from "../controllers/documentController.js";
 
+import { authenticateUser } from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
 // router.post("/", createDocument);
 
-router.get("/:id", getDocument);
+router.get("/:id", authenticateUser,documentAccess, getDocument);
 
-router.put("/:id", updateDocument);
+router.put("/:id", authenticateUser, documentAccess,updateDocument);
 
-router.patch(
-  "/:id",
-  renameDocument
-);
+router.patch("/:id", authenticateUser,documentAccess, renameDocument);
 
-router.delete(
-  "/:id",
-  deleteDocument
-);
+router.delete("/:id", authenticateUser, documentAccess,deleteDocument);
 
 export default router;

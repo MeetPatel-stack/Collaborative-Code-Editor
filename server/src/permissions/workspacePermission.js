@@ -1,23 +1,22 @@
+export const hasRole = (
+  member,
+  roles
+) => {
+  return roles.includes(member.role);
+};
+
 export const isOwner = (
   member
-) => {
-  return member?.role === "OWNER";
-};
+) => hasRole(member, ["OWNER"]);
 
 export const isTeacher = (
   member
-) => {
-  return member?.role === "TEACHER";
-};
+) => hasRole(member, ["TEACHER"]);
 
 export const isStudent = (
   member
-) => {
-  return member?.role === "STUDENT";
-};
+) => hasRole(member, ["STUDENT"]);
 
 export const isMember = (
   member
-) => {
-  return member?.role === "MEMBER";
-};
+) => hasRole(member, ["MEMBER"]);

@@ -14,18 +14,15 @@ import Document from "../models/Document.js";
 //   }
 // };
 
-
 export const getDocument = async (req, res) => {
   try {
-    const document = await Document.findById(req.params.id);
-
-    if (!document) {
+    if (!req.document) {
       return res.status(404).json({
         message: "Document not found",
       });
     }
 
-    res.json(document);
+    res.json(req.document);
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -46,7 +43,7 @@ export const updateDocument = async (req, res) => {
       },
       {
         new: true,
-      }
+      },
     );
 
     if (!document) {
@@ -63,24 +60,15 @@ export const updateDocument = async (req, res) => {
   }
 };
 
-
-export const renameDocument = async (
-  req,
-  res
-) => {
+export const renameDocument = async (req, res) => {
   try {
-    const document =
-      await Document.findByIdAndUpdate(
-        req.params.id,
-        {
-          title: req.body.title,
-        },
-        { new: true }
-      );
+    req.document.title = req.body.title;
+
+    await req.document.save();
 
     res.status(200).json({
       success: true,
-      document,
+      document: req.document,
     });
   } catch (error) {
     res.status(500).json({
@@ -90,14 +78,9 @@ export const renameDocument = async (
   }
 };
 
-export const deleteDocument = async (
-  req,
-  res
-) => {
+export const deleteDocument = async (req, res) => {
   try {
-    await Document.findByIdAndDelete(
-      req.params.id
-    );
+    await req.document.deleteOne();
 
     res.status(200).json({
       success: true,

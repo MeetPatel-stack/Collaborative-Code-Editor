@@ -21,7 +21,7 @@ const workspaceSchema = new mongoose.Schema(
       default: null,
     },
 
-    password: {
+    passwordHash: {
       type: String,
       default: null,
     },

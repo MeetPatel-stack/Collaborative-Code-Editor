@@ -42,7 +42,7 @@ function FileExplorer({
     try {
       const language = detectLanguage(fileName);
 
-      const response = await createRoomDocument(workspaceId, {
+      const response = await createWorkspaceDocument(workspaceId, {
         title: fileName,
         language,
       });
