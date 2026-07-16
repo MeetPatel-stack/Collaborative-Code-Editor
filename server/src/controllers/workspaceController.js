@@ -1,6 +1,7 @@
 import Workspace from "../models/Workspace.js";
 import Document from "../models/Document.js";
 import { getIO } from "../socket/socket.js";
+import bcrypt from "bcrypt";
 
 import WorkspaceMember from "../models/WorkspaceMember.js";
 import { createWorkspaceService } from "../services/workspaceService.js";

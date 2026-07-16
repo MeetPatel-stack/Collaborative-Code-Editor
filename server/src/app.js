@@ -12,6 +12,8 @@ import cookieParser from "cookie-parser";
 
 import "./config/passport.js";
 
+import { errorHandler } from "./middleware/errorHandler.js";
+
 const app = express();
 
 app.use(
@@ -39,6 +41,8 @@ app.use(passport.session());
 app.use("/api/auth", authRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/workspaces", workspaceRoutes);
+
+app.use(errorHandler);
 
 app.get("/", (req, res) => {
   res.send("CodeCollab API Running");
