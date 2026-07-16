@@ -23,3 +23,12 @@ export const createWorkspaceDocument = async (workspaceId, payload) => {
 
   return res.data;
 };
+
+export const joinWorkspace = async (payload) => {
+  const res = await axiosClient.post(
+    "/workspaces/join",
+    payload
+  );
+
+  return res.data;
+};

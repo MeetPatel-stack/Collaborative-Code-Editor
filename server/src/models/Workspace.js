@@ -25,6 +25,17 @@ const workspaceSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    
+    joinCode: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    isJoinEnabled: {
+      type: Boolean,
+      default: true,
+    },
 
     allowAI: {
       type: Boolean,
@@ -33,7 +44,7 @@ const workspaceSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default mongoose.model("Workspace", workspaceSchema);

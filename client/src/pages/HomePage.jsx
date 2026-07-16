@@ -69,6 +69,9 @@ function HomePage() {
         <br />
 
         <button onClick={handleCreateWorkspace}>Create Workspace</button>
+        <br />
+        <br />
+        <button onClick={() => navigate("/join")}>Join Workspace</button>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import WorkspaceMember from "../models/WorkspaceMember";
+import WorkspaceMember from "../models/WorkspaceMember.js";
 
 // export const getWorkspaceMembers = async (
 //   workspaceId

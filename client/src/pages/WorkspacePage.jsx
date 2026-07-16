@@ -8,7 +8,7 @@ import { getWorkspaceDocuments, getWorkspace } from "../api/workspaceApi";
 import { getDocument, updateDocument } from "../api/documentApi";
 
 function WorkspacePage() {
-  const { workspaceId} = useParams();
+  const { workspaceId } = useParams();
 
   const [documents, setDocuments] = useState([]);
   const [activeDocument, setActiveDocument] = useState(null);
@@ -37,7 +37,10 @@ function WorkspacePage() {
     try {
       const data = await getWorkspace(workspaceId);
 
-      setRoom(data.room);
+      console.log("API Response:", data);
+
+      setRoom(data.workspace);
+      console.log("After setRoom");
     } catch (error) {
       console.error(error);
     }
@@ -99,6 +102,7 @@ function WorkspacePage() {
 
   useEffect(() => {
     fetchRoom();
+    console.log(room);
     fetchDocuments(true);
   }, [workspaceId]);
 
@@ -144,8 +148,6 @@ function WorkspacePage() {
 
   useEffect(() => {
     socket.on("file-created", (newDocument) => {
-      
-
       setDocuments((prev) => [...prev, newDocument]);
     });
 
@@ -161,6 +163,21 @@ function WorkspacePage() {
         height: "100vh",
       }}
     >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          padding: "10px",
+          borderBottom: "1px solid #ccc",
+        }}
+      >
+        <h3>{room?.name}</h3>
+
+        <div>
+          Join Code:
+          <strong>{room?.joinCode}</strong>
+        </div>
+      </div>
       <FileExplorer
         room={room}
         workspaceId={workspaceId}

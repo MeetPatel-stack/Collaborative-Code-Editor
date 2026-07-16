@@ -5,11 +5,13 @@ import {
   getWorkspace,
   getWorkspaceDocuments,
   createWorkspaceDocument,
+  joinWorkspace
 } from "../controllers/workspaceController.js";
 
 // for schema validation purpose
 import { validate } from "../middleware/validate.js";
 import { createWorkspaceSchema } from "../validations/workspaceValidation.js";
+import { joinWorkspaceSchema } from "../validations/joinWorkspaceValidation.js";
 
 const router = express.Router();
 
@@ -31,6 +33,13 @@ router.post(
   "/:workspaceId/documents",
   authenticateUser,
   createWorkspaceDocument,
+);
+
+router.post(
+  "/join",
+  authenticateUser,
+  validate(joinWorkspaceSchema),
+  joinWorkspace
 );
 
 export default router;

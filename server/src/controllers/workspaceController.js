@@ -6,6 +6,14 @@ import bcrypt from "bcrypt";
 import WorkspaceMember from "../models/WorkspaceMember.js";
 import { createWorkspaceService } from "../services/workspaceService.js";
 
+import {
+  joinWorkspaceService,
+} from "../services/workspaceService.js";
+
+import asyncHandler from "../utils/asyncHandler.js";
+import ApiResponse from "../utils/ApiResponse.js";
+
+
 export const createWorkspace = async (req, res) => {
   try {
     if (!req.user) {
@@ -119,3 +127,21 @@ export const createWorkspaceDocument = async (req, res) => {
     });
   }
 };
+
+export const joinWorkspace = asyncHandler(
+  async (req, res) => {
+    const result =
+      await joinWorkspaceService({
+        ...req.body,
+        user: req.user,
+      });
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        result,
+        "Workspace joined successfully"
+      )
+    );
+  }
+);
