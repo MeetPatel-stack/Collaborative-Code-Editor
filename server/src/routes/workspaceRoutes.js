@@ -5,14 +5,15 @@ import {
   getWorkspace,
   getWorkspaceDocuments,
   createWorkspaceDocument,
-  joinWorkspace
+  joinWorkspace,
+  getMyWorkspaces,
 } from "../controllers/workspaceController.js";
 
 // for schema validation purpose
 import { validate } from "../middleware/validate.js";
 import { createWorkspaceSchema } from "../validations/workspaceValidation.js";
 import { joinWorkspaceSchema } from "../validations/joinWorkspaceValidation.js";
-
+import { workspaceAccess } from "../middleware/workspaceAccess.js";
 const router = express.Router();
 
 // router.post("/", authenticateUser, createWorkspace);
@@ -25,13 +26,21 @@ router.post(
 
   createWorkspace,
 );
-router.get("/:workspaceId", authenticateUser, getWorkspace);
+router.get("/my", authenticateUser, getMyWorkspaces);
 
-router.get("/:workspaceId/documents", authenticateUser, getWorkspaceDocuments);
+router.get("/:workspaceId", authenticateUser, workspaceAccess, getWorkspace);
+
+router.get(
+  "/:workspaceId/documents",
+  authenticateUser,
+  workspaceAccess,
+  getWorkspaceDocuments,
+);
 
 router.post(
   "/:workspaceId/documents",
   authenticateUser,
+  workspaceAccess,
   createWorkspaceDocument,
 );
 
@@ -39,7 +48,7 @@ router.post(
   "/join",
   authenticateUser,
   validate(joinWorkspaceSchema),
-  joinWorkspace
+  joinWorkspace,
 );
 
 export default router;

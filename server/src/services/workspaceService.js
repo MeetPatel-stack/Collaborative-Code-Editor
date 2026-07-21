@@ -82,3 +82,21 @@ export const joinWorkspaceService = async ({ joinCode, password, user }) => {
     alreadyMember: false,
   };
 };
+
+export const getMyWorkspacesService = async (userId) => {
+  const memberships = await WorkspaceMember.find({
+    userId,
+  });
+
+  const workspaceIds = memberships.map(
+    (member) => member.workspaceId
+  );
+
+  const workspaces = await Workspace.find({
+    _id: {
+      $in: workspaceIds,
+    },
+  });
+
+  return workspaces;
+};

@@ -6,7 +6,7 @@ export const createWorkspaceSchema = z.object({
 
     .trim()
 
-    .min(3)
+    .min(1)
 
     .max(50),
 

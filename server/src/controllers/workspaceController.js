@@ -4,7 +4,7 @@ import { getIO } from "../socket/socket.js";
 import bcrypt from "bcrypt";
 
 import WorkspaceMember from "../models/WorkspaceMember.js";
-import { createWorkspaceService } from "../services/workspaceService.js";
+import { createWorkspaceService , getMyWorkspacesService} from "../services/workspaceService.js";
 
 import {
   joinWorkspaceService,
@@ -141,6 +141,24 @@ export const joinWorkspace = asyncHandler(
         200,
         result,
         "Workspace joined successfully"
+      )
+    );
+  }
+);
+
+
+export const getMyWorkspaces = asyncHandler(
+  async (req, res) => {
+    const workspaces =
+      await getMyWorkspacesService(
+        req.user._id
+      );
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        workspaces,
+        "Workspaces fetched successfully"
       )
     );
   }

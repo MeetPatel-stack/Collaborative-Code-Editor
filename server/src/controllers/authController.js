@@ -21,13 +21,10 @@ export const googleSuccess = async (req, res) => {
     secure: false,
   });
 
-  res.redirect(process.env.CLIENT_URL);
+  res.redirect(`${process.env.CLIENT_URL}/dashboard`);
 };
 
-export const getCurrentUser = async (
-  req,
-  res
-) => {
+export const getCurrentUser = async (req, res) => {
   try {
     res.status(200).json({
       success: true,

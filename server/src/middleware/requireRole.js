@@ -1,17 +1,11 @@
-export const requireRole =
-(...roles) =>
-(req, res, next) => {
+import ApiError from "../utils/ApiError.js";
 
-    if (
-        !roles.includes(
-            req.workspaceMember.role
-        )
-    ){
-        return res.status(403).json({
-            success:false,
-            message:"Permission denied"
-        });
+export const requireRole =
+  (...roles) =>
+  (req, res, next) => {
+    if (!roles.includes(req.workspaceMember.role)) {
+      throw new ApiError(403, "You don't have permission");
     }
 
     next();
-};
+  };

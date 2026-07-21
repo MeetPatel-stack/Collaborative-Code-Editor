@@ -32,3 +32,11 @@ export const joinWorkspace = async (payload) => {
 
   return res.data;
 };
+
+export const getMyWorkspaces = async () => {
+  const res = await axiosClient.get(
+    "/workspaces/my"
+  );
+
+  return res.data;
+};
