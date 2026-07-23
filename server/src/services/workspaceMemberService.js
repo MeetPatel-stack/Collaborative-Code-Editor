@@ -8,7 +8,7 @@ import WorkspaceMember from "../models/WorkspaceMember.js";
 //   }).populate("userId");
 // };
 
-export const getWorkspaceMember =
+export const  getWorkspaceMember =
 async (
   workspaceId,
   userId

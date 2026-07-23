@@ -4,15 +4,17 @@ import { getIO } from "../socket/socket.js";
 import bcrypt from "bcrypt";
 
 import WorkspaceMember from "../models/WorkspaceMember.js";
-import { createWorkspaceService , getMyWorkspacesService} from "../services/workspaceService.js";
-
 import {
-  joinWorkspaceService,
+  createWorkspaceService,
+  getMyWorkspacesService,
 } from "../services/workspaceService.js";
+
+import { joinWorkspaceService } from "../services/workspaceService.js";
 
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
+import WorkspacePresence from "../models/WorkspacePresence.js";
 
 export const createWorkspace = async (req, res) => {
   try {
@@ -38,6 +40,13 @@ export const createWorkspace = async (req, res) => {
       workspaceId: workspace._id,
       userId: req.user._id,
       role: type === "CLASSROOM" ? "TEACHER" : "OWNER",
+    });
+
+    await WorkspacePresence.create({
+      workspaceId: workspace._id,
+      userId: req.user._id,
+      status: "ONLINE",
+      activity: "VIEWING",
     });
 
     const document = await Document.create({
@@ -128,38 +137,28 @@ export const createWorkspaceDocument = async (req, res) => {
   }
 };
 
-export const joinWorkspace = asyncHandler(
-  async (req, res) => {
-    const result =
-      await joinWorkspaceService({
-        ...req.body,
-        user: req.user,
-      });
+export const joinWorkspace = asyncHandler(async (req, res) => {
+  const result = await joinWorkspaceService({
+    ...req.body,
+    user: req.user,
+  });
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        result,
-        "Workspace joined successfully"
-      )
-    );
-  }
-);
+  await WorkspacePresence.create({
+    workspaceId: workspace._id,
+    userId: req.user._id,
+    status: "ONLINE",
+    activity: "VIEWING",
+  });
 
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, "Workspace joined successfully"));
+});
 
-export const getMyWorkspaces = asyncHandler(
-  async (req, res) => {
-    const workspaces =
-      await getMyWorkspacesService(
-        req.user._id
-      );
+export const getMyWorkspaces = asyncHandler(async (req, res) => {
+  const workspaces = await getMyWorkspacesService(req.user._id);
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        workspaces,
-        "Workspaces fetched successfully"
-      )
-    );
-  }
-);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, workspaces, "Workspaces fetched successfully"));
+});

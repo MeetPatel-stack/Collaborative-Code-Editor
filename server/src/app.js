@@ -6,6 +6,8 @@ import cors from "cors";
 import documentRoutes from "./routes/documentRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import memberRoutes from "./routes/memberRoutes.js";
+import presenceRoutes from "./routes/presenceRoute.js"
 import session from "express-session";
 import passport from "passport";
 import cookieParser from "cookie-parser";
@@ -41,7 +43,8 @@ app.use(passport.session());
 app.use("/api/auth", authRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/workspaces", workspaceRoutes);
-
+app.use("/api/members", memberRoutes);
+app.use("/api/presence", presenceRoutes);
 app.use(errorHandler);
 
 app.get("/", (req, res) => {

@@ -20,7 +20,7 @@ export const createWorkspaceService = async ({
   const joinCode = `${
     type === "CLASSROOM" ? "LAB" : "TEAM"
   }-${nanoid()}`.toUpperCase();
-  
+
   const workspace = await Workspace.create({
     name,
 
@@ -88,9 +88,7 @@ export const getMyWorkspacesService = async (userId) => {
     userId,
   });
 
-  const workspaceIds = memberships.map(
-    (member) => member.workspaceId
-  );
+  const workspaceIds = memberships.map((member) => member.workspaceId);
 
   const workspaces = await Workspace.find({
     _id: {
@@ -99,4 +97,12 @@ export const getMyWorkspacesService = async (userId) => {
   });
 
   return workspaces;
+};
+
+export const getWorkspaceMembersService = async (workspaceId) => {
+  const members = await WorkspaceMember.find({
+    workspaceId,
+  }).populate("userId", "name avatar");
+
+  return members;
 };
